@@ -21,7 +21,12 @@ export function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
 
   async function handleUserPhotoSelect() {
-    await ImagePicker.launchImageLibraryAsync();
+    await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // All | Images | Video
+      quality: 1, // de 1 à 100
+      aspect: [4, 4], // tamanho 4x4
+      allowsEditing: true, // permite editar e recortar a imagem
+    });
   }
 
   return (
