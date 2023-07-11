@@ -9,7 +9,7 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 
 export function SignUp() {
-  const { control } = useForm();
+  const { control, handleSubmit } = useForm();
 
   const navigation = useNavigation();
 
@@ -17,7 +17,9 @@ export function SignUp() {
     navigation.goBack();
   }
 
-  function handleSignUp() {}
+  function handleSignUp(data: any) {
+    console.log(data);
+  }
 
   return (
     <ScrollView
@@ -62,7 +64,7 @@ export function SignUp() {
                 placeholder="E-mail"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                onChange={onChange}
+                onChangeText={onChange}
                 value={value}
               />
             )}
@@ -75,7 +77,7 @@ export function SignUp() {
               <Input
                 placeholder="Senha"
                 secureTextEntry
-                onChange={onChange}
+                onChangeText={onChange}
                 value={value}
               />
             )}
@@ -87,14 +89,19 @@ export function SignUp() {
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="Confirme a senha"
-                onChange={onChange}
+                onChangeText={onChange}
                 value={value}
                 secureTextEntry
+                onSubmitEditing={handleSubmit(handleSignUp)}
+                returnKeyType="send"
               />
             )}
           />
 
-          <Button title="Criar e acessar" onPress={handleSignUp} />
+          <Button
+            title="Criar e acessar"
+            onPress={handleSubmit(handleSignUp)}
+          />
         </Center>
 
         <Button
