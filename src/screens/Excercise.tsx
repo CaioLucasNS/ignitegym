@@ -41,7 +41,7 @@ export function Excercise() {
           alignItems="center"
           flexShrink={1}
         >
-          <Heading color="gray.100" fontSize="lg">
+          <Heading color="gray.100" fontSize="lg" fontFamily="heading">
             Puxada frontal
           </Heading>
 
