@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   VStack,
@@ -8,19 +9,20 @@ import {
   ScrollView,
   useToast,
 } from "native-base";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
+
+import { useAuth } from "@hooks/useAuth";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
-import { useAuth } from "@hooks/useAuth";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
-import { Controller, useForm } from "react-hook-form";
 import { AppError } from "@utils/AppError";
 
 type SignInDataProps = {
@@ -37,6 +39,7 @@ const signInSchema = yup.object({
 });
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
 
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
@@ -56,6 +59,7 @@ export function SignIn() {
 
   async function handleSignIn({ email, password }: SignInDataProps) {
     try {
+      setIsLoading(true);
       await signIn(email, password);
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -63,6 +67,8 @@ export function SignIn() {
       const title = isAppError
         ? error.message // message do backend
         : "Não foi possível entrar. Tente novamente mais tarde."; // mensagem de erro genérica do app
+
+      setIsLoading(false);
 
       toast.show({
         title,
@@ -128,7 +134,11 @@ export function SignIn() {
             )}
           />
 
-          <Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
+          <Button
+            title="Acessar"
+            onPress={handleSubmit(handleSignIn)}
+            isLoading={isLoading}
+          />
         </Center>
 
         <Center mt={24}>
