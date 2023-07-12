@@ -1,18 +1,25 @@
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { VStack, Image, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  VStack,
+  Image,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  useToast,
+} from "native-base";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import axios from "axios";
 import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
 
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
-import { Alert } from "react-native";
 
 type FormDataProps = {
   name: string;
@@ -45,6 +52,8 @@ export function SignUp() {
 
   const navigation = useNavigation();
 
+  const toast = useToast();
+
   function handleGoBack() {
     navigation.goBack();
   }
@@ -54,9 +63,17 @@ export function SignUp() {
       const response = await api.post("/users", { name, email, password });
       console.log(response.data);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        Alert.alert(error.response?.data.message);
-      }
+      const isAppError = error instanceof AppError; // se for, significa que é um erro tratado
+
+      const title = isAppError
+        ? error.message
+        : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
     }
   }
 
