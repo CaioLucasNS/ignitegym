@@ -1,5 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { VStack, Image, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  VStack,
+  Image,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  useToast,
+} from "native-base";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -13,6 +21,7 @@ import BackgroundImg from "@assets/background.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { Controller, useForm } from "react-hook-form";
+import { AppError } from "@utils/AppError";
 
 type SignInDataProps = {
   email: string;
@@ -28,9 +37,10 @@ const signInSchema = yup.object({
 });
 
 export function SignIn() {
-  const { user, signIn } = useAuth();
+  const { signIn } = useAuth();
 
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
+  const toast = useToast();
 
   const {
     control,
@@ -45,7 +55,21 @@ export function SignIn() {
   }
 
   async function handleSignIn({ email, password }: SignInDataProps) {
-    await signIn(email, password);
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError
+        ? error.message // message do backend
+        : "Não foi possível entrar. Tente novamente mais tarde."; // mensagem de erro genérica do app
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
   }
 
   return (
