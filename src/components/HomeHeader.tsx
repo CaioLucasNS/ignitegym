@@ -1,9 +1,12 @@
 import { Heading, HStack, Text, VStack, Icon } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { useAuth } from "@hooks/useAuth";
+
 import { UserPhoto } from "./UserPhoto";
 import { TouchableOpacity } from "react-native";
-import { useAuth } from "@hooks/useAuth";
+
+import DefaultUserPhotoImg from "@assets/userPhotoDefault.png";
 
 export function HomeHeader() {
   const { user } = useAuth();
@@ -11,7 +14,7 @@ export function HomeHeader() {
   return (
     <HStack bg="gray.600" pt={16} pb={5} px={8} alignItems="center">
       <UserPhoto
-        source={{ uri: "https://github.com/CaioLucasNS.png" }}
+        source={user.avatar ? { uri: user.avatar } : DefaultUserPhotoImg}
         size={16}
         alt="Imagem do usuário"
         mr={4}
