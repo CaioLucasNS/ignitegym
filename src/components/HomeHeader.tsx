@@ -3,8 +3,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { UserPhoto } from "./UserPhoto";
 import { TouchableOpacity } from "react-native";
+import { useAuth } from "@hooks/useAuth";
 
 export function HomeHeader() {
+  const { user } = useAuth();
+
   return (
     <HStack bg="gray.600" pt={16} pb={5} px={8} alignItems="center">
       <UserPhoto
@@ -20,7 +23,7 @@ export function HomeHeader() {
         </Text>
 
         <Heading color="gray.100" fontSize="md" fontFamily="heading">
-          Caio Lucas
+          {user.name}
         </Heading>
       </VStack>
 
