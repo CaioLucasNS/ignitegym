@@ -5,6 +5,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
+import { useAuth } from "@hooks/useAuth";
+
 import LogoSvg from "@assets/logo.svg";
 import BackgroundImg from "@assets/background.png";
 
@@ -26,6 +28,10 @@ const signInSchema = yup.object({
 });
 
 export function SignIn() {
+  const { user, signIn } = useAuth();
+
+  const navigation = useNavigation<AuthNavigatorRoutesProps>();
+
   const {
     control,
     handleSubmit,
@@ -34,14 +40,12 @@ export function SignIn() {
     resolver: yupResolver(signInSchema),
   });
 
-  const navigation = useNavigation<AuthNavigatorRoutesProps>();
-
   function handleNewAccount() {
     navigation.navigate("SignUp");
   }
 
   function handleSignIn({ email, password }: SignInDataProps) {
-    console.log({ email, password });
+    signIn(email, password);
   }
 
   return (
