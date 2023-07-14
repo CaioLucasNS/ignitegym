@@ -43,7 +43,12 @@ const profileSchema = yup.object({
     .string()
     .nullable()
     .transform((value) => (!!value ? value : null))
-    .oneOf([yup.ref("password")], "A confirmação de senha não confere."),
+    .oneOf([yup.ref("password")], "A confirmação de senha não confere.")
+    .when("password", {
+      is: (Field: any) => Field, // se tem conteúdo dentro de 'password'
+      then: (schema) =>
+        schema.nullable().required("Informe a confirmação da senha."), // então o campo 'confirm_password' será required
+    }),
 });
 
 export function Profile() {
@@ -64,7 +69,7 @@ export function Profile() {
       name: user.name,
       email: user.email,
     },
-    resolver: yupResolver(profileSchema),
+    resolver: yupResolver(profileSchema) as any,
   });
 
   async function handleUserPhotoSelect() {
