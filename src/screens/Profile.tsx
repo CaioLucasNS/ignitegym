@@ -47,7 +47,10 @@ const profileSchema = yup.object({
     .when("password", {
       is: (Field: any) => Field, // se tem conteúdo dentro de 'password'
       then: (schema) =>
-        schema.nullable().required("Informe a confirmação da senha."), // então o campo 'confirm_password' será required
+        schema
+          .nullable()
+          .required("Informe a confirmação da senha.")
+          .transform((value) => (!!value ? value : null)), // então o campo 'confirm_password' será required
     }),
 });
 
