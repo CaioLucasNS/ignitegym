@@ -110,7 +110,15 @@ export function Profile() {
           });
         }
 
-        setUserPhoto(photoSelected.assets[0].uri);
+        const fileExtension = photoSelected.assets[0].uri.split(".").pop();
+        const photoFile = {
+          name: `${user.name.replace(" ", "-")}.${fileExtension}`.toLowerCase(),
+          uri: photoSelected.assets[0].uri,
+          type: `${photoSelected.assets[0].type}/${fileExtension}`,
+        };
+
+        console.log(JSON.stringify(photoFile, null, 4));
+        // setUserPhoto(photoSelected.assets[0].uri);
       }
     } catch (error) {
       console.log(error);
