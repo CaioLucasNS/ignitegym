@@ -115,11 +115,23 @@ export function Profile() {
           name: `${user.name.replace(" ", "-")}.${fileExtension}`.toLowerCase(),
           uri: photoSelected.assets[0].uri,
           type: `${photoSelected.assets[0].type}/${fileExtension}`,
-        };
+        } as any;
 
-        console.log(JSON.stringify(photoFile, null, 4));
-        // setUserPhoto(photoSelected.assets[0].uri);
+        const userPhotoUploadForm = new FormData();
+        userPhotoUploadForm.append("avatar", photoFile);
+
+        await api.patch("/users/avatar", userPhotoUploadForm, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
+
+      toast.show({
+        title: "Foto atualizada!",
+        placement: "top",
+        bgColor: "green.500",
+      });
     } catch (error) {
       console.log(error);
     } finally {
