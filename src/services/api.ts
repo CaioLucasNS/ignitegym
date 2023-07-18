@@ -15,11 +15,23 @@ const api = axios.create({
 api.registerInterceptTokenManager = (signOut) => {
   const interceptTokenManager = api.interceptors.response.use(
     (response) => response,
-    (error) => {
-      if (error.response && error.response.data) {
-        return Promise.reject(new AppError(error.response.data.message)); // erro vindo do back-end
+    (requestError) => {
+      // 401 = requisição não autorizada = token
+      if (requestError?.response?.status === 401) {
+        if (
+          requestError.response.data?.message === "token.expired" ||
+          requestError.response.data?.message === "token.invalid"
+        ) {
+        }
+
+        signOut();
+      }
+
+      // só chega nessa verificação caso não seja um erro relacionado ao token
+      if (requestError.response && requestError.response.data) {
+        return Promise.reject(new AppError(requestError.response.data.message)); // erro vindo do back-end
       } else {
-        return Promise.reject(error); // erro genérico
+        return Promise.reject(requestError); // erro genérico
       }
     }
   );
