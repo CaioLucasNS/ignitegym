@@ -74,7 +74,31 @@ api.registerInterceptTokenManager = (signOut) => {
                 token: data.token,
                 refresh_token: data.refresh_token,
               });
-              console.log("TOKEN ATUALIZADO => ", data);
+
+              if (originalRequestConfig.data) {
+                originalRequestConfig.data = JSON.parse(
+                  originalRequestConfig.data
+                );
+              }
+
+              // atualizando os headers tanto das próximas requisições, quanto dessa requisição que passou por aqui
+              // requisição que passou por aqui =>
+              originalRequestConfig.headers = {
+                Authorization: `Bearer ${data.token}`,
+              };
+              // próximas requisições =>
+              api.defaults.headers.common[
+                "Authorization"
+              ] = `Bearer ${data.token}`;
+
+              // percorrendo a fila de requisições para as requisições que edxistem lá dentro e processando com o onSuccess
+              failedQueue.forEach((request) => {
+                request.onSuccess(data.token);
+              });
+
+              console.log("TOKEN ATUALIZADO!");
+
+              resolve(api(originalRequestConfig)); // reenviando requisição
             } catch (error: any) {
               failedQueue.forEach((request) => {
                 request.onFailure(error);
